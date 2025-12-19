@@ -15,32 +15,24 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends --no-install-suggests \
             ca-certificates \
+            git \
  && update-ca-certificates \
     \
- # Install dependencies for Linux toolchain
- && apt-get install -y --no-install-recommends --no-install-suggests \
-            build-essential \
-            clang cmake \
-            lcov \
-            libgtk-3-dev liblzma-dev \
-            ninja-build \
-            pkg-config \
-    \
- # Install Flutter itself
- && curl -fL -o /tmp/flutter.tar.xz \
-         https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${flutter_ver}-stable.tar.xz \
- && tar -xf /tmp/flutter.tar.xz -C /usr/local/ \
+ # Install Flutter via git clone (works on both x64 and arm64)
+ && git clone --depth 1 --branch ${flutter_ver} https://github.com/flutter/flutter.git /usr/local/flutter \
  && git config --global --add safe.directory /usr/local/flutter \
+ && git config --system --add safe.directory /usr/local/flutter \
  && flutter config --enable-android \
-                   --enable-linux-desktop \
                    --enable-web \
+                   --no-enable-linux-desktop \
                    --no-enable-ios \
- && flutter precache --universal --linux --web --no-ios \
+ && flutter precache --universal --android --web --no-ios \
  && (yes | flutter doctor --android-licenses) \
  && flutter --version \
     \
- # Make Flutter tools available for non-root usage
+ # Make Flutter cache writable for non-root users
  && chown -R 1000:1000 /usr/local/flutter/packages/flutter_tools/.dart_tool/ \
+ && chmod -R a+w /usr/local/flutter/bin/cache \
     \
  && rm -rf /var/lib/apt/lists/* \
            /tmp/*
