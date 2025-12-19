@@ -30,8 +30,9 @@ RUN apt-get update \
  && (yes | flutter doctor --android-licenses) \
  && flutter --version \
     \
- # Make Flutter tools available for non-root usage
+ # Make Flutter cache writable for non-root users
  && chown -R 1000:1000 /usr/local/flutter/packages/flutter_tools/.dart_tool/ \
+ && chmod -R a+w /usr/local/flutter/bin/cache \
     \
  && rm -rf /var/lib/apt/lists/* \
            /tmp/*
