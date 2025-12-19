@@ -15,12 +15,11 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends --no-install-suggests \
             ca-certificates \
+            git \
  && update-ca-certificates \
     \
- # Install Flutter itself
- && curl -fL -o /tmp/flutter.tar.xz \
-         https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${flutter_ver}-stable.tar.xz \
- && tar -xf /tmp/flutter.tar.xz -C /usr/local/ \
+ # Install Flutter via git clone (works on both x64 and arm64)
+ && git clone --depth 1 --branch ${flutter_ver} https://github.com/flutter/flutter.git /usr/local/flutter \
  && git config --global --add safe.directory /usr/local/flutter \
  && flutter config --enable-android \
                    --enable-web \
