@@ -30,9 +30,11 @@ RUN apt-get update \
  && (yes | flutter doctor --android-licenses) \
  && flutter --version \
     \
- # Make Flutter cache writable for non-root users
- && chown -R 1000:1000 /usr/local/flutter/packages/flutter_tools/.dart_tool/ \
+ # Normalize all file ownership to root (UID 0) for compatibility with rootless containers
+ # This fixes UID mapping issues in rootless Podman/Docker
+ && chown -R 0:0 /usr/local/flutter \
  && chmod -R a+w /usr/local/flutter/bin/cache \
+ && chmod -R a+w /usr/local/flutter/packages/flutter_tools/.dart_tool \
     \
  && rm -rf /var/lib/apt/lists/* \
            /tmp/*
