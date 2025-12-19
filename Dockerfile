@@ -21,6 +21,7 @@ RUN apt-get update \
  # Install Flutter via git clone (works on both x64 and arm64)
  && git clone --depth 1 --branch ${flutter_ver} https://github.com/flutter/flutter.git /usr/local/flutter \
  && git config --global --add safe.directory /usr/local/flutter \
+ && git config --system --add safe.directory /usr/local/flutter \
  && flutter config --enable-android \
                    --enable-web \
                    --no-enable-linux-desktop \
